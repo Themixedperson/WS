@@ -1,14 +1,18 @@
-
 #Build and run
 sudo docker-compose up -d
-#Main page (list all movies) curl -i 193.219.91.103:1994 Search Movie by 
-#title curl -i 193.219.91.103:1994/getMovieTitle/<search word> Search movies 
-#by genre curl -i 193.219.91.103:1994/getMovieGenre/<genre> Search movies 
-#with raiting equal or higher curl -i 
-#193.219.91.103:1994/getMovieRating/<numeric rating> Create new movie curl -i 
-#-X POST -H "Content-Type: application/json" -d '{"Title": "<title>", 
-#"Release date": "<date>", "Rating": "<rating>", "Genre": "<genre>"}' 
-#193.219.91.103:1994/newMovie Rate movie Rating is calculated automatically 
-#curl -i -X PUT -H "Content-Type: application/json" -d '{"Rating": "<rating>"}' 
-#193.219.91.103:1994/rateMovie/<rating> Deletes movie by ID
-#curl -i -X DELETE 193.219.91.103:1994/deleteMovie/<ID>
+#Displays all movies
+curl -i localhost/movies
+#Search title
+curl -i localhost/movies?title=<title>
+#Search genre
+curl -i localhost/movies?genre=<genre>
+#Search rating equal or higher
+curl -i localhost/movies?rating=<rating>
+#Creates new movie
+curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/movies/new
+#Update rating
+curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/movies/rated/2
+#Update move
+curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/updated/2
+#Deletes movie by ID
+curl -i -X DELETE localhost/movies/deleted/3
