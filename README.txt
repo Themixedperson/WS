@@ -9,6 +9,6 @@ sudo docker-compose up -d
 #-X POST -H "Content-Type: application/json" -d '{"Title": "<title>", 
 #"Release date": "<date>", "Rating": "<rating>", "Genre": "<genre>"}' 
 #193.219.91.103/newMovie Rate movie Rating is calculated automatically 
-#curl -i -X PUT -H "Content-Type: application/json" -d '{"Rating": "5"}' 
+#curl -i -X PUT -H "Content-Type: application/json" -d '{"Rating": "<rating>"}' 
 #193.219.91.103/rateMovie/<rating> Deletes movie by ID
 #curl -i -X DELETE 193.219.91.103/deleteMovie/<ID>
