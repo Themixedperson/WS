@@ -81,10 +81,10 @@ def hello():
 		for i in movies:
 			if( re.search(request.args.get('title', ''), i["Title"], re.IGNORECASE)):
 				foundMovies.append(i)
-		return jsonify(foundMovies)
+		return jsonify(foundMovies), 200
 	elif( request.args.get('genre', '')):
 		foundMovies = [ movie for movie in movies if (movie['Genre'] == request.args.get('genre', ''))]
-		return jsonify(foundMovies)
+		return jsonify(foundMovies), 200
 	elif( request.args.get('rating', '')):
 		if( re.search('^[0-9](\.[0-9]*)?$', request.args.get('rating', ''))):
 			foundMovies = []
@@ -92,16 +92,16 @@ def hello():
 				if ( re.search('^[0-9](\.[0-9]*)?$', movie['Rating'])):
 					if (float(movie['Rating']) > float(request.args.get('rating', ''))):
 						foundMovies.append(movie)
-			return jsonify(foundMovies)
+			return jsonify(foundMovies), 200
 		else:
-			return jsonify({'Error':'Rating has to be between 0-10'})
+			return jsonify({'Error':'Rating has to be between 0-10'}), 404
 	else:
-		return jsonify(movies)
+		return jsonify(movies), 200
 
 @app.route('/movies/<movieID>', methods=['GET'])
 def getMovieByID(movieID):
 	movieByID = [ movie for movie in movies if ( movie['ID'] == movieID)]
-	return jsonify(movieByID)
+	return jsonify(movieByID), 200
 
 #Creates new movie
 #curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/newMovie
