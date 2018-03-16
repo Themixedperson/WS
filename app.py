@@ -98,9 +98,14 @@ def hello():
 	else:
 		return jsonify(movies)
 
+@app.route('/movies/<movieID>', methods=['GET'])
+def getMovieByID(movieID):
+	movieByID = [ movie for movie in movies if ( movie['ID'] == movieID)]
+	return jsonify(movieByID)
+
 #Creates new movie
 #curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/newMovie
-@app.route('/movies/new', methods=['POST'])
+@app.route('/movies', methods=['POST'])
 def newMovie():
         numberOfMovies = len(movies)
         new_Movie={
@@ -114,10 +119,8 @@ def newMovie():
         return jsonify(new_Movie), 201
 
 #Rate movie
-#Rating is calculated automatically
-#keisti visa objekta
-#curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/rateMovie/2
-@app.route('/movies/rated/<movieId>', methods=['PATCH'])
+#curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/movies/rated/2
+@app.route('/movies/<movieId>', methods=['PATCH'])
 def rateMovie( movieId ):
         rated = [ movie for movie in movies if ( movie['ID'] == movieId)]
         setRating = request.json['Rating']
@@ -131,8 +134,8 @@ def rateMovie( movieId ):
         else:
                 return jsonify({'Error':'Rating has to be between 0-10'}), 404
 
-#curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/rateMovie/2
-@app.route('/movies/updated/<movieId>', methods=['PUT'])
+#curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' localhost/movies/updated/2
+@app.route('/movies/<movieId>', methods=['PUT'])
 def changeMovie( movieId ):
 	changed = [ movie for movie in movies if ( movie['ID'] == movieId)]
 	movies[int(movieId)]['Title'] = request.json['Title']
@@ -143,8 +146,8 @@ def changeMovie( movieId ):
 	
 
 #Deletes movie by ID
-#curl -i -X DELETE localhost/deleteMovie/3
-@app.route('/movies/deleted/<movieId>', methods=['DELETE'])
+#curl -i -X DELETE localhost/deleted/3
+@app.route('/movies/<movieId>', methods=['DELETE'])
 def removeMovie( movieId ):
         deleted = [ movie for movie in movies if ( movie['ID'] == movieId)]
         if len(deleted) == 0:
