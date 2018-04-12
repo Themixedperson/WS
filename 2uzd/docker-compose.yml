@@ -1,0 +1,18 @@
+version: '2'
+services:
+ web:
+  build: .
+  command: python app.py
+  ports:
+   - "80:5000"
+  volumes:
+   - .:/code
+ web1:
+  build: ./WebServisai/
+  command: python ./WebServisai/app.py
+  ports:
+   - "81:5000"
+  volumes:
+   - .:/code
+  depends_on:
+   - web
