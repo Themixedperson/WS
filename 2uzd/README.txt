@@ -3,16 +3,16 @@ docker-compose build
 docker-compose up -d
 -----------------NEW FUNCTIONALITY-------------
 #Displays movie album
-curl -i 193.219.91.103:4496/movies/<movieID>/album
+curl -i localhost/movies/<movieID>/album
 
 #Creates new movie and album
-curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' 193.219.91.103:4496/movies/album
+curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/album
 
 #Changes movie album info
-curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' 193.219.91.103:4496//movies/<movieID>/album
+curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>/album
 
 #Changes movie ALbumID if it exists
-#curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album ID": "2"}' 193.219.91.103:4496/movies/<movieID>/album
+#curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album ID": "2"}' localhost/movies/<movieID>/album
 -----------------------------------------------
 #Displays all movies
 curl -i 193.219.91.103:4496/movies
