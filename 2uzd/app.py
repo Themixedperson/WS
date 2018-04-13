@@ -169,7 +169,7 @@ def removeMovie( movieId ):
 #curl -i localhost/movie/<movieID>/album
 @app.route('/movies/<movieId>/album', methods=['GET'])
 def getAlbum(movieId):
-	r = requests.get('http://172.18.0.1:81/albums/'+movies[int(movieId)]['Album ID'])
+	r = requests.get('http://web1:81/albums/'+movies[int(movieId)]['Album ID'])
 	if r.status_code == 404:
 		return jsonify({'Error' : 'Album not found.'}), 404
 	else:
@@ -180,7 +180,7 @@ def getAlbum(movieId):
 #curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/album
 @app.route('/movies/album', methods=['POST'])
 def newMovieAlbum():
-	r = requests.post('http://172.18.0.1:81/albums', json = {"Album" : request.json['Album'], "Artist" : request.json['Artist'], "Genre" : request.json['Genre of Album'], "Producer" : request.json['Producer']})
+	r = requests.post('http://web1:81/albums', json = {"Album" : request.json['Album'], "Artist" : request.json['Artist'], "Genre" : request.json['Genre of Album'], "Producer" : request.json['Producer']})
 	r = json.loads(r.text)
 	numberOfMovies = len(movies)
 	new_Movie={
@@ -197,7 +197,7 @@ def newMovieAlbum():
 #curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>/album
 @app.route('/movies/<movieId>/album', methods=['PUT'])
 def changeMovieAlbum( movieId ):
-	r = requests.put('http://172.18.0.1:81/albums/'+movies[int(movieId)]["Album ID"], json = {"Album" : request.json['Album'], "Artist" : request.json['Artist'], "Genre" : request.json['Genre of Album'], "Producer" : request.json['Producer']})
+	r = requests.put('http://web1:81/albums/'+movies[int(movieId)]["Album ID"], json = {"Album" : request.json['Album'], "Artist" : request.json['Artist'], "Genre" : request.json['Genre of Album'], "Producer" : request.json['Producer']})
 	r = json.loads(r.text)
 	return jsonify(r), 200
 
@@ -205,7 +205,7 @@ def changeMovieAlbum( movieId ):
 #curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album ID": "2"}' localhost/movies/2/album
 @app.route('/movies/<movieId>/album', methods=['PATCH'])
 def changeAlbum(movieId):
-	r = requests.get('http://172.18.0.1:81/albums/'+request.json['Album ID'])
+	r = requests.get('http://web1:81/albums/'+request.json['Album ID'])
 	if r.status_code == 404:
 		return jsonify({'Error' : 'Album not found.'}), 404
 	else:
@@ -213,4 +213,4 @@ def changeAlbum(movieId):
 		return jsonify(movies[int(movieId)]), 200
 
 if __name__ == "__main__":
-        app.run(host="0.0.0.0", debug=True)
+        app.run(host="0.0.0.0", debug=True, port=5000)
