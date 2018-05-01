@@ -2,38 +2,38 @@
 docker-compose build
 docker-compose up -d
 -----------------NEW FUNCTIONALITY-------------
-#Displays movie album
-curl -i localhost/movies/<movieID>/album
+#Displays movie and album
+curl -i localhost/movies/<movieID>?embedded=album
 
-#Creates new movie and album
-curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/album
+#Creates new movie and new album
+curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : {"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}}' localhost/movies?embedded=album
 
-#Changes movie album info
+#Changes movie and album
 curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>/album
 
-#Changes movie ALbumID if it exists
-#curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album ID": "2"}' localhost/movies/<movieID>/album
+#Changes movie AlbumID if it exists
+curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album_ID": "2"}' localhost/movies/<movie_id>
 -----------------------------------------------
 #Displays all movies
-curl -i 193.219.91.103:4496/movies
+curl -i localhost
 
 #Search title
-curl -i 193.219.91.103:4496/movies?title=<title>
+curl -i localhost/movies?title=<title>
 
 #Search genre
-curl -i 193.219.91.103:4496/movies?genre=<genre>
+curl -i localhost/movies?genre=<genre>
 
 #Search rating equal or higher
-curl -i 193.219.91.103:4496/movies?rating=<rating>
+curl -i localhost/movies?raiting=<raiting>
 
 #Creates new movie
-curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' 193.219.91.103:4496/movies
+curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album_ID" : "1"}' localhost/movies
 
-#Update rating
-curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' 193.219.91.103:4496/movies/<ID>
+#Rate movie (update raiting)
+curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/movies/<movie_id>
 
 #Update move
 curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' 193.219.91.103:4496/moviess/<ID>
 
 #Deletes movie by ID
-curl -i -X DELETE 193.219.91.103:4496/movies/<ID>
+curl -i -X DELETE localhost/movies/<movie_id>
