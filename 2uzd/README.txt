@@ -9,7 +9,7 @@ curl -i localhost/movies/<movieID>?embedded=album
 curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : {"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}}' localhost/movies?embedded=album
 
 #Changes movie and album
-curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>/album
+curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>
 
 #Changes movie AlbumID if it exists
 curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album_ID": "2"}' localhost/movies/<movie_id>
