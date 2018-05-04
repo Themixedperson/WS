@@ -9,10 +9,10 @@ curl -i localhost/movies/<movieID>?embedded=album
 curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album" : {"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}}' localhost/movies?embedded=album
 
 #Changes movie and album
-curl -i -X PUT -H "Content-Type: application/json" -d '{"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}' localhost/movies/<movieID>
+curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album": {"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}
 
-#Changes movie AlbumID if it exists
-curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album_ID": "2"}' localhost/movies/<movie_id>
+#Changes movie Album if it exists
+curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album": {"Album" : "1", "Artist" : "Mikutavicius", "Genre of Album" : "yra", "Producer" : "Mikutavicius"}}' localhost/movies/<movieID>
 -----------------------------------------------
 #Displays all movies
 curl -i localhost
@@ -31,9 +31,10 @@ curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Rele
 
 #Rate movie (update raiting)
 curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/movies/<movie_id>
+###curl -i -X PATCH -H "Content-Type: application/json" -d '{"Album_ID": "2"}' localhost/movies/<movie_id>
 
 #Update move
-curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' 193.219.91.103:4496/moviess/<ID>
+curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release_date": "2018", "Rating": "Not Rated", "Genre": "Horror", "Album_ID": "2"}' localhost/movies/2
 
 #Deletes movie by ID
 curl -i -X DELETE localhost/movies/<movie_id>
