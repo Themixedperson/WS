@@ -33,7 +33,6 @@ curl -i -X POST -H "Content-Type: application/json" -d '{"Title": "Venom", "Rele
 curl -i -X PATCH -H "Content-Type: application/json" -d '{"Rating": "5"}' localhost/movies/<movie_id>
 
 #Update move
-curl -i -X PUT -H "Content-Type: application/json" -d '{"Title": "Venom", "Release date": "2018", "Rating": "Not Rated", "Genre": "Horror"}' 193.219.91.103:4496/moviess/<ID>
 
 #Deletes movie by ID
 curl -i -X DELETE localhost/movies/<movie_id>
