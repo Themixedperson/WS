@@ -130,7 +130,7 @@ def getMovieByID(movieID):
 def newMovie():
 		if('Album' in request.json):
 			album = request.json['Album']
-			r = requests.post('http://web1:81/albums', json = {"Album" : album['Album'], "Artist" : album['Artist'], "Genre" : album['Genre of Album'], "Producer" : album['Producer']})
+			r = requests.post('http://web1:81/albums', json = {"Album" : album['Album'], "Artist" : album['Artist'], "Genre" : album['Genre'], "Producer" : album['Producer']})
 			r = json.loads(r.text)
 			numberOfMovies = len(movies)
 			new_Movie={
