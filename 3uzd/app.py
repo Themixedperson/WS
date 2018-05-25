@@ -381,20 +381,23 @@ class MoviesSoapService(spyne.Service):
 	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode(default=''), _returns=Movie)
 	def newMovieAlbumSoap(Title, Genre, Rating, Release_date, Album, Artist, AlbumGenre, Producer):
 		if Producer != "":
-			r = requests.post('http://web1:81/albums', json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
-			r = json.loads(r.text)
-			numberOfMovies = len(movies)
-			new_Movie={
-						'ID' : str(numberOfMovies),
-						'Title' : Title,
-						'Release_date' : Release_date,
-						'Rating' : Rating,
-						'Genre' : Genre,
-						'Album_ID' : r.get("ID")
-						}
-			movies.append(new_Movie)
-			movie = movies[len(movies)-1]
-		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=r.get("ID"))
+			try:
+				r = requests.post('http://web1:81/albums', json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
+				r = json.loads(r.text)
+				numberOfMovies = len(movies)
+				new_Movie={
+							'ID' : str(numberOfMovies),
+							'Title' : Title,
+							'Release_date' : Release_date,
+							'Rating' : Rating,
+							'Genre' : Genre,
+							'Album_ID' : r.get("ID")
+							}
+				movies.append(new_Movie)
+				movie = movies[len(movies)-1]
+				return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=r.get("ID"))
+			except:
+				raise Fault(faultcode='Client', faultstring='', faultactor='', detail={'Message':'Error. Service Albums is not available.'})
 
 	@spyne.srpc(Unicode, Unicode, _returns=Movie)
 	def rateMovieSoap(Id, Rating):
@@ -406,15 +409,20 @@ class MoviesSoapService(spyne.Service):
 	
 	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Movie)
 	def changeMovieSoap(Id, Title, Genre, Release_date ,Rating, Album_ID):
-		r = requests.get('http://web1:81/albums/'+Album_ID)
-		if r.status_code == 200 and re.search('^[0-9]?$', Id):
-			movies[int(Id)]['Title'] = Title
-			movies[int(Id)]['Genre'] = Genre
-			movies[int(Id)]['Rating'] = Rating
-			movies[int(Id)]['Release_date'] = Release_date
-			movies[int(Id)]['Album_ID'] = Album_ID
-			movie = movies[int(Id)]
-		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
+		try:
+			r = requests.get('http://web1:81/albums/'+Album_ID)
+			if r.status_code == 200 and re.search('^[0-9]?$', Id):
+				movies[int(Id)]['Title'] = Title
+				movies[int(Id)]['Genre'] = Genre
+				movies[int(Id)]['Rating'] = Rating
+				movies[int(Id)]['Release_date'] = Release_date
+				movies[int(Id)]['Album_ID'] = Album_ID
+				movie = movies[int(Id)]
+			else:
+				raise Fault(faultcode='Client', faultstring='', faultactor='', detail={'Message':'Error. Service Albums status is not 200.'})
+			return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
+		except:
+				raise Fault(faultcode='Client', faultstring='', faultactor='', detail={'Message':'Error. Service Albums is not available.'})
 
 	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Movie)
 	def deleteMovieSoap(Id, Title, Genre, Release_date ,Rating, Album_ID):
@@ -424,18 +432,24 @@ class MoviesSoapService(spyne.Service):
 			movie = deleted[0]
 		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
 
-	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Movie)
-	def changeMovieAlbumSoap(Id, Title, Genre, Release_date ,Rating, Album, AlbumGenre, Producer, Artist, ):
-		for i in range(0, len(movies)):
-			if movies[i]["ID"] == Id:
-				r = requests.put('http://web1:81/albums/'+movies[i]["Album_ID"], json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
-				if r.status_code != 404 and re.search('^[0-9]?$', Id):
-					movies[i]['Title'] = Title
-					movies[i]['Genre'] = Genre
-					movies[i]['Rating'] = Rating
-					movies[i]['Release_date'] = Release_date
-					movie = movies[i]
-		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
+	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode(default=''), _returns=Movie)
+	def changeMovieAlbumSoap(Id, Title, Genre, Release_date ,Rating, Album, AlbumGenre, Producer, Artist ):
+		if Artist != '':
+			try:
+				for i in range(0, len(movies)):
+					if movies[i]["ID"] == Id:
+						r = requests.put('http://web1:81/albums/'+movies[i]["Album_ID"], json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
+						if r.status_code == 200 and re.search('^[0-9]?$', Id):
+							movies[i]['Title'] = Title
+							movies[i]['Genre'] = Genre
+							movies[i]['Rating'] = Rating
+							movies[i]['Release_date'] = Release_date
+							movie = movies[i]
+						else:
+							raise Fault(faultcode='Client', faultstring='', faultactor='', detail={'Message':'Error. Service Albums status is not 200.'})
+				return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
+			except:
+				raise Fault(faultcode='Client', faultstring='', faultactor='', detail={'Message':'Error. Service Albums is not available.'})
 
 if __name__ == '__main__':
 	app.run(host="0.0.0.0", debug=True, port=5000)
