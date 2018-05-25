@@ -3,6 +3,7 @@ from flask_spyne import Spyne
 from spyne.protocol.soap import Soap11
 from spyne.model.primitive import Unicode, Integer
 from spyne.model.complex import Iterable, Array, ComplexModel
+from spyne.model.fault import Fault
 from redis import Redis
 from flask import jsonify
 from flask import request
@@ -282,11 +283,24 @@ class MoviesSoapService(spyne.Service):
 	__in_protocol__ = Soap11(validator='lxml')
 	__out_protocol__ = Soap11()
 
-	@spyne.srpc(_returns=Array(Movie))
-	def getMovieSoap():
+	@spyne.srpc(Unicode(default=''), Unicode(default=''), _returns=Array(Movie))
+	def getMovieSoap(option, search):
 		m = []
-		for movie in movies:
-			m.append(Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"]))
+		if option == '' or search == '':
+			for movie in movies:
+				m.append(Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"]))
+		elif option == "ID":
+			for movie in movies:
+				if( movie["ID"] == search ):
+					m.append(Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"]))
+		elif option == "Title":
+			for movie in movies:
+				if( re.search( search, movie["Title"], re.IGNORECASE) ):
+					m.append(Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"]))
+		else:
+			for movie in movies:
+				m.append(Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"]))
+			
 		return m
 
 	@spyne.srpc(Unicode, _returns=Array(Movie))
@@ -340,7 +354,7 @@ class MoviesSoapService(spyne.Service):
 	def newMovieSoap(Title, Genre, Rating, Release_date ,Album_ID):
 		numberOfMovies = len(movies)
 		r = requests.get('http://web1:81/albums/'+Album_ID)
-		if r.status_code != 404:
+		if r.status_code == 200:
 			new_Movie={
 					'ID' : str(numberOfMovies),
 					'Title' : Title,
@@ -363,22 +377,23 @@ class MoviesSoapService(spyne.Service):
 			movies.append(new_Movie)
 			movie = movies[len(movies)-1]
 		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=movie["Album_ID"])
-		
-	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Movie)
+
+	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, Unicode(default=''), _returns=Movie)
 	def newMovieAlbumSoap(Title, Genre, Rating, Release_date, Album, Artist, AlbumGenre, Producer):
-		r = requests.post('http://web1:81/albums', json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
-		r = json.loads(r.text)
-		numberOfMovies = len(movies)
-		new_Movie={
-					'ID' : str(numberOfMovies),
-					'Title' : Title,
-					'Release_date' : Release_date,
-					'Rating' : Rating,
-					'Genre' : Genre,
-					'Album_ID' : r.get("ID")
-					}
-		movies.append(new_Movie)
-		movie = movies[len(movies)-1]
+		if Producer != "":
+			r = requests.post('http://web1:81/albums', json = {"Album" : Album, "Artist" : Artist, "Genre" : AlbumGenre, "Producer" : Producer})
+			r = json.loads(r.text)
+			numberOfMovies = len(movies)
+			new_Movie={
+						'ID' : str(numberOfMovies),
+						'Title' : Title,
+						'Release_date' : Release_date,
+						'Rating' : Rating,
+						'Genre' : Genre,
+						'Album_ID' : r.get("ID")
+						}
+			movies.append(new_Movie)
+			movie = movies[len(movies)-1]
 		return Movie(ID=movie["ID"], Title=movie["Title"], Genre=movie["Genre"], Rating=movie["Rating"], Release_date=movie["Release_date"], Album_ID=r.get("ID"))
 
 	@spyne.srpc(Unicode, Unicode, _returns=Movie)
@@ -392,7 +407,7 @@ class MoviesSoapService(spyne.Service):
 	@spyne.srpc(Unicode, Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Movie)
 	def changeMovieSoap(Id, Title, Genre, Release_date ,Rating, Album_ID):
 		r = requests.get('http://web1:81/albums/'+Album_ID)
-		if r.status_code != 404 and re.search('^[0-9]?$', Id):
+		if r.status_code == 200 and re.search('^[0-9]?$', Id):
 			movies[int(Id)]['Title'] = Title
 			movies[int(Id)]['Genre'] = Genre
 			movies[int(Id)]['Rating'] = Rating
